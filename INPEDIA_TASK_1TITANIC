@@ -1,0 +1,210 @@
+import numpy as np # linear algebra
+import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+train=pd.read_csv('titanic.csv')
+df=train.copy()
+# See the first 5 rows
+df.head()
+# last 5 rows.
+df.tail()
+# n_samples x n_features
+df.shape
+#List of all the columns
+df.columns
+# Rows index
+df.index
+# Values with their counts in a particular column
+df['pclass'].value_counts()
+# General description of dataset.
+df.describe()
+# empty data frame
+df_empty=pd.DataFrame()
+df_empty.head()  #;)
+# From dict
+student_dict={'Name':['A','B','C'],'Age':[24,18,17],'Roll':[1,2,3]}
+df_student=pd.DataFrame(student_dict).reset_index(drop=True) # without this adds an additional index column in df
+df_student.head()
+df.head()
+# on whole df.
+df.isnull().sum()
+# on a particular column
+df['Age'].isnull().sum()
+df['Age'].fillna(df['Age'].mean(),inplace=True)
+df['Age'].isnull().sum()
+df['Sex'].fillna(df['Sex'].mode(),inplace=True)
+df['Sex'].isnull().sum()
+df.head()
+df['Sex']=df['Sex'].map({"male":'0',"female":"1"})
+df.head()
+# Finding last name and first name from Name column.
+df['last_name']=df['Name'].apply(lambda x: x.split(',')[0])
+df['first_name']=df['Name'].apply(lambda x: ' '.join(x.split(',')[1:]))
+df.head()
+#sets to 1 for men in 3rd class.
+df['Thrid&Men']=df.apply(lambda row: int(row['Pclass']==3 and row['Sex']=="0"),axis=1)
+df.head()
+def findAgeGroup(age):
+    if age<18:
+        return 1
+    elif age>=18 and age<40:
+        return 2
+    elif age>=40 and age<60:
+        return 3
+    else:
+        return 4
+df['Age_group']=df['age'].apply(lambda x: findAgeGroup(x))
+# Calling a custom function.
+df.head()
+#Deleting columns¶
+df.head()
+df=df.drop(['passengerId'],axis=1)
+#df=df.drop(['PassengerId'],axis=1,inplace=True)
+df.head()
+# Lets try to rename some columns. 
+df=df.rename(columns={'Sex':'Gender','Name':'Full Name','last_name':'Surname','first_name':'Name'})
+df.head()
+#Slicing DataFrame
+df.head()
+# All rows with pclass==3
+df_third_class=df[df['pclass']==3].reset_index(drop=True) # w/0 drop=True it actually adds a index column rather.
+df_third_class.head()
+# Females with age > 60
+df_aged=df[(df['age']>60) & (df['Gender']=="1")]
+df_aged.head()
+# Selecting some columns.
+df1=df[['age','pclass','Gender']]
+df1.head()
+# Select numerical columns only
+numerics = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64']
+
+df_num = df.select_dtypes(include=numerics)
+df_num.head()
+# categorical columns
+df_cat=df.select_dtypes(include=['object'])
+df_cat.head()
+#Slicing using iloc and loc
+df.head()
+# First 100 rows & all columns
+df_sub1=df.iloc[0:100,:]
+df_sub1.head()
+#First 250 rows with a subset of columns
+
+#df_sub2=df.iloc[:250,['Age']] 
+# This will throw an error as iloc only consumes integres as indices.
+
+df_sub2=df.iloc[:250,[1,8]] 
+#Returns first 250 rows and columns at those indices in df.columns.
+df_sub2.head()
+#loc
+df.head()
+# First 500 rows.
+df_sub3=df.loc[:500,:]
+# Gender and age of age >50
+df_sub4=df.loc[(df['age']>50),['Gender','age']]
+df_sub4.head()
+# Adding a row
+df.head()
+# Adding row using 'append' function
+row=dict({'Age':24,'Full Name':'Peter','Survived':'Y'})
+df=df.append(row,ignore_index=True)
+# assumes Nan for absent keys(columns)
+df.tail()
+# Adding new row using loc
+df.loc[len(df.index)]=row
+df.tail()
+#Dropping row(s)
+df=df.drop(df.index[-1],axis=0) # Deletes last row
+df.head()
+#Sorting
+df.head()
+# sorting by age say in decreasing order.
+df=df.sort_values(by=['Age'],ascending=False) # can specify multiple columns in a list as well.
+df.head()
+#Joins
+#Let's create two separate data frames and try all 5 (Cross,Inner, Left, Right,and Outer Joins)
+sno=[i+1 for i in range(100)]
+marks=np.random.randint(100,size=100)
+print(len(marks))
+marks_df=pd.DataFrame({'Sno':sno,'Marks':marks})
+marks_df.head()
+sno=[i+1 for i in range(100)]
+age=np.random.randint(100,size=100)
+print(len(marks))
+age_df=pd.DataFrame({'Sno':sno,'Age':age})
+age_df.head()
+#Cross join
+cross_join=pd.merge(marks_df,age_df,how='cross')
+print(cross_join.shape)
+cross_join.head()
+#Inner Join
+inner_join=pd.merge(age_df,marks_df,how='inner',on='Sno') # 'how' defaults to 'inner' only.
+print(inner_join.shape)
+inner_join.head()
+#Left and Right Outer Join(s
+#Lets add some more rows to either frame so that left and right outer join makes sense
+age_df.loc[len(age_df.index)]={'Sno':101,'Age':23}
+age_df.loc[len(age_df.index)]={'Sno':102,'Age':27}
+age_df.loc[len(age_df.index)]={'Sno':104,'Age':29}
+age_df.loc[len(age_df.index)]={'Sno':103,'Age':32}
+age_df.loc[len(age_df.index)]={'Sno':105,'Age':53}
+#left join
+left_join=pd.merge(age_df,marks_df,how='left',on='Sno')
+print(left_join.shape)
+left_join.tail()  
+#right join
+right_join=pd.merge(marks_df,age_df,how='right',on='Sno')
+print(right_join.shape)
+right_join.tail()  
+#Full outer join
+#One last time, lets modify the marks frame also to test Full outer join.
+marks_df.loc[len(marks_df.index)]={'Sno':106,'Marks':79}
+marks_df.tail()
+#outer join
+out_join=pd.merge(marks_df,age_df,how='outer',on='Sno')
+print(out_join.shape)
+out_join.tail(10)
+#12. Groupby
+#Let's get back to our titanic dataset.
+df.head()
+df.head()
+groups=df.groupby(['pclass'])
+# uncomment this: 
+# groups.groups
+groups.get_group(1) # Give some another no say 2 or 3 for its Pclass.
+#Average Age per Pclass
+df_grp1=df.groupby(['pclass'])
+#df_grp1.head()
+#Average Age per Pclass
+df_grp1['Age'].mean()
+# Min/Max age per Pclass
+df_grp1['Age'].min() #max()
+# Count
+df_grp1['Age'].count()
+#Using agg() function.
+We can use the aggregate fucntion to aggregate results based on some column  or our custom condition
+df=train.copy()
+df.head()
+# Average per Pclass using 'agg' this time
+df_grp2=df.groupby(['pclass']).agg({'age':lambda x: np.mean(x)}) 
+df_grp2.head()
+# Min/Max,count,Sum for each Pclass usign agg function
+df_grp3=df.groupby(['pclass']).agg({'age':'min'}).rename(columns={'age':'Min Age'})
+# Use 'max'/'sum' etc. for that operation. Note that this ignores 'nan' values.
+df_grp3.head()
+# Names of all the pasengers in that class.
+df_grp4=df.groupby(['pclass']).agg({'name':lambda x:', '.join(x)})
+df_grp4.head()
+df.head()
+#Note one thing that we can use multile agg functions on a single attribute by providing list in value part.
+df_grp5=df.groupby(['pclass']).agg({'age':['max','min']})
+df_grp5.head() # Creates a MultiOndex Dataframe
+#Bonus: Iterating over rows in dataframe
+df.head()
+for index,row in df.iterrows():
+    # do something with row, say:
+    #print(row)
+    pass
+#Rough
+arr1=np.random.randint(100,size=(100,1))
+arr2=np.random.randint(100,size=(100))
+arr1
+arr2
