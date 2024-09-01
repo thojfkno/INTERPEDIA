@@ -1,0 +1,97 @@
+import numpy as np 
+import pandas as pd 
+import os
+for dirname, _, filenames in os.walk('/kaggle/input'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import sklearn        
+%matplotlib inline
+Iris = pd.read_csv("IRIS.csv")
+print(Iris.head(10))
+print ("The shape of the  data is (row, column):"+ str(Iris.shape))
+print (Iris.info())
+Iris['variety'].value_counts()
+Iris.isnull().sum()
+Iris.dtypes
+import numpy as np
+np.matrix(Iris)
+import seaborn as sb
+import pandas as pd
+import numpy as np 
+import matplotlib.pyplot as plt
+pd = pd.read_csv("IRIS.csv")
+plt.figure(figsize = (9,9))
+ax=plt.subplot(221)
+plt.boxplot(Iris['sepal.length'])
+ax.set_title('percentage of sepal.length')
+ax=plt.subplot(222)
+plt.boxplot(Iris['sepal.width'])
+ax.set_title('percentage of sepal.width')
+ax=plt.subplot(223)
+plt.boxplot(Iris['petal.length'])
+ax.set_title('percentage of petal.length')
+ax=plt.subplot(224)
+plt.boxplot(Iris['petal.width'])
+ax.set_title(' percentage of petal.width')
+Q1 = Iris['sepal.length'].quantile(0.25)
+Q3 = Iris['sepal.length'].quantile(0.75)
+IQR = Q3 - Q1
+filter = (Iris['sepal.length'] >= Q1 - 1.5 * IQR) & (Iris['sepal.length'] <= Q3 + 1.5 *IQR)
+Iris=Iris.loc[filter]
+plt.figure(figsize = (15, 5))
+plt.style.use('seaborn-white')
+ax=plt.subplot(121)
+plt.boxplot(Iris['sepal_length'])
+ax.set_title('Before removing outliers(sepal_length)')
+ax=plt.subplot(122)
+plt.boxplot(Iris['sepal_length'])
+ax.set_title('After removing outliers(sepal_length)')
+plot=plt.figure(figsize=(5,5))
+sns.countplot(x='variety',data=Iris)
+A=Iris.drop(columns='variety')
+B=Iris['variety']
+print(A,B)
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+A_train,A_test,B_train,B_test=train_test_split(A,B,test_size=0.1,stratify=B,random_state=1)
+A_train
+logreg=LogisticRegression()
+logreg.fit(A_train,B_train)
+A_train_prediction=logreg.predict(A_train)
+training_data_accuracy=accuracy_score(A_train_prediction,B_train)
+print('accuracy for traning data is',training_data_accuracy)
+A_test_prediction=logreg.predict(A_test)
+test_data_accuracy=accuracy_score(A_test_prediction,B_test)
+print('accuracy for test data is',test_data_accuracy)
+ab=DecisionTreeClassifier().fit(A_train,B_train)
+A_train_prediction=ab.predict(A_train)
+training_data_accuracy=accuracy_score(A_train_prediction,B_train)
+print('accuracy for training data is',training_data_accuracy)
+A_test_prediction=ab.predict(A_test)
+test_data_accuracy=accuracy_score(A_test_prediction,B_test)
+print('accuracy for test data is',test_data_accuracy)
+knn=KNeighborsClassifier()
+knn.fit(A_train,B_train)
+A_train_prediction=knn.predict(A_train)
+training_Data_accuracy=accuracy_score(A_train_prediction,B_train)
+print("accuracy for training data is",training_data_accuracy)
+A_test_prediction=knn.predict(A_test)
+test_data_accuracy=accuracy_score(A_test_prediction,B_test)
+print('accuracy for test data is',test_data_accuracy)
+Data=(5.7,2.5,5.0,2.0)
+Data_as_numpy_array=np.asarray(Data)
+Data_reshaped=Data_as_numpy_array.reshape(1,-1)
+print('Prediction Model    |    PredictedValues')
+prediction=logreg.predict(Data_reshaped)
+print('Logistic regression       ',prediction[0])
+prediction=ab.predict(Data_reshaped)
+print('Decision tree             ',prediction[0])
+prediction=knn.predict(Data_reshaped)
+print('Knn                       ',prediction[0])
