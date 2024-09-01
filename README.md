@@ -18,3 +18,6 @@ Development cooperation, Intercountry adoption, Child rights, Global education, 
 
 Founded
 1974
+CREDIT CARD JUPYTER LINK: http://localhost:8888/notebooks/CreditCardFraud.ipynb
+IRIS FLOWER JUPYTER LINK: http://localhost:8888/notebooks/iris.ipynb
+TITANIC JUPYTER LINK:http://localhost:8888/notebooks/titanic.ipynb
